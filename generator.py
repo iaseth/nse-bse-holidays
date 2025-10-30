@@ -5,6 +5,10 @@ from tabulate import tabulate
 
 
 
+START_YEAR = 2018
+END_YEAR = 2025
+
+
 class Holiday:
 	def __init__(self, date_str, name):
 		self.date = datetime.strptime(date_str, "%Y-%m-%d").date()
@@ -30,15 +34,24 @@ with open("holidays.json") as f:
 
 
 def main():
-	for year in range(2018, 2026):
-		holidays_in_year = [holiday.cols for holiday in holidays if year == holiday.year]
-		out_file = f"{year}.md"
+	for year in range(START_YEAR, END_YEAR+1):
+		holidays_in_year = [holiday for holiday in holidays if year == holiday.year]
+		year_data = [holiday.cols for holiday in holidays_in_year]
+		year_out_file = f"{year}.md"
 
-		with open(out_file, "w") as f:
+		with open(year_out_file, "w") as f:
 			f.write(f"# Stock Market Holidays in {year}\n\n")
-			f.write(tabulate(holidays_in_year, tablefmt="github", headers=["Month", "Date", "Day", "Holiday"]))
+			f.write(tabulate(year_data, tablefmt="github", headers=["Month", "Date", "Day", "Holiday"]))
 			f.write("\n\n")
-		print(f"Saved: {out_file} ({len(holidays_in_year)} holidays)")
+		print(f"Saved: {year_out_file} ({len(holidays_in_year)} holidays)")
+
+	out_file = "README.md"
+	data = [h.cols for h in holidays]
+	with open(out_file, "w") as f:
+		f.write(f"# Stock Market Holidays from {START_YEAR} to {END_YEAR}\n\n")
+		f.write(tabulate(data, tablefmt="github", headers=["Month", "Date", "Day", "Holiday"]))
+		f.write("\n\n")
+	print(f"Saved: {out_file} ({len(holidays)} holidays)")
 
 
 if __name__ == '__main__':
